@@ -1,107 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" page-range-format="expanded" default-locale="en-US">
+<style xmlns="http://purl.org/net/xbiblio/csl"
+       class="in-text"
+       version="1.0"
+       default-locale="en-US">
+
   <info>
-    <title>SCIENCE CHINA Life Sciences Fixed Final</title>
-    <id>http://www.zotero.org/styles/science-china-life-sciences-fixed-final</id>
-    <link href="http://www.zotero.org/styles/science-china-life-sciences-fixed-final" rel="self"/>
-    <author>
-      <name>Gemini Partner</name>
-    </author>
+    <title>SCIENCE CHINA Life Sciences (fixed)</title>
+    <id>http://www.zotero.org/styles/science-china-life-sciences-fixed</id>
+    <link href="http://www.zotero.org/styles/science-china-life-sciences-fixed" rel="self"/>
+    <link href="http://www.springer.com/life+sciences/journal/11427" rel="documentation"/>
     <category citation-format="author-date"/>
     <issn>1674-7305</issn>
     <eissn>1869-1889</eissn>
-    <updated>2024-05-20T12:00:00+00:00</updated>
-    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+    <updated>2026-01-09</updated>
   </info>
+
+  <!-- ================= -->
+  <!-- Locale / Date -->
+  <!-- ================= -->
   <locale xml:lang="en">
-    <terms>
-      <term name="editor" form="short">ed.</term>
-    </terms>
+    <date form="text" delimiter=" ">
+      <date-part name="year"/>
+      <date-part name="month" form="short" strip-periods="true"/>
+      <date-part name="day"/>
+    </date>
   </locale>
+
+  <!-- ================= -->
+  <!-- Macros -->
+  <!-- ================= -->
+
+  <!-- Authors -->
   <macro name="author">
     <names variable="author">
-      <name delimiter-precedes-last="always" initialize-with="." name-as-sort-order="all" sort-separator=", "/>
+      <name name-as-sort-order="all"
+            sort-separator=", "
+            initialize-with="."
+            delimiter-precedes-last="always"/>
       <substitute>
         <names variable="editor"/>
-        <text variable="title"/>
       </substitute>
     </names>
   </macro>
+
+  <!-- Short author for citation -->
   <macro name="author-short">
     <names variable="author">
       <name form="short" and="text"/>
       <substitute>
         <names variable="editor"/>
-        <text variable="title"/>
       </substitute>
     </names>
   </macro>
-  <macro name="year-date">
+
+  <!-- Year -->
+  <macro name="year">
     <date variable="issued">
       <date-part name="year"/>
     </date>
   </macro>
+
+  <!-- Title -->
+  <macro name="title">
+    <text variable="title"/>
+  </macro>
+
+  <!-- Journal / Container title -->
   <macro name="container-title">
     <choose>
-      <if type="article-journal article-magazine" match="any">
-        <text variable="container-title" form="short" strip-periods="true"/>
+      <if type="article-journal article-magazine article-newspaper" match="any">
+        <text variable="container-title" font-style="italic" suffix=" "/>
       </if>
       <else>
-        <text variable="container-title"/>
+        <text variable="container-title" suffix=" "/>
       </else>
     </choose>
   </macro>
-  <macro name="publisher">
-    <group delimiter=": ">
-      <text variable="publisher-place"/>
-      <text variable="publisher"/>
-    </group>
+
+  <!-- Volume -->
+  <macro name="volume">
+    <text variable="volume"/>
   </macro>
-  <citation et-al-min="3" et-al-use-first="1" disambiguate-add-year-suffix="true">
+
+  <!-- Pages -->
+  <macro name="pages">
+    <choose>
+      <if type="article-journal article-magazine article-newspaper" match="any">
+        <text variable="page" prefix=": "/>
+      </if>
+      <else>
+        <group delimiter=" ">
+          <label variable="page" form="short"/>
+          <text variable="page"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+
+  <!-- Publisher (ONLY for non-journal items) -->
+  <macro name="publisher">
+    <choose>
+      <if type="article-journal article-magazine" match="none">
+        <group delimiter=": " prefix="(" suffix=")">
+          <text variable="publisher-place"/>
+          <text variable="publisher"/>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- ================= -->
+  <!-- Citation -->
+  <!-- ================= -->
+  <citation et-al-min="3" et-al-use-first="1"
+            disambiguate-add-year-suffix="true">
     <sort>
-      <key macro="year-date"/>
-      <key macro="author"/>
+      <key macro="author-short"/>
+      <key variable="issued"/>
     </sort>
     <layout prefix="(" suffix=")" delimiter="; ">
-      <group delimiter=", ">
+      <group delimiter=" ">
         <text macro="author-short"/>
-        <text macro="year-date"/>
+        <text macro="year"/>
       </group>
     </layout>
   </citation>
+
+  <!-- ================= -->
+  <!-- Bibliography -->
+  <!-- ================= -->
   <bibliography et-al-min="7" et-al-use-first="6">
     <sort>
       <key macro="author"/>
-      <key macro="year-date"/>
+      <key macro="year"/>
     </sort>
+
     <layout suffix=".">
+      <!-- Author. (Year). Title. -->
       <group delimiter=". ">
         <text macro="author"/>
-        <text macro="year-date" prefix="(" suffix=")"/>
-        <text variable="title"/>
+        <group>
+          <text macro="year" prefix="(" suffix=")"/>
+        </group>
+        <text macro="title"/>
       </group>
-      <choose>
-        <if type="article-journal article-magazine" match="any">
-          <group prefix=". ">
-            <text macro="container-title"/>
-            <text variable="volume" prefix=" "/>
-            <text variable="page" prefix=", "/>
-          </group>
-        </if>
-        <else-if type="chapter paper-conference" match="any">
-          <group prefix=". " delimiter=" ">
-            <text term="in" text-case="capitalize-first" suffix=":"/>
-            <text macro="container-title" suffix="."/>
-            <text macro="publisher"/>
-            <text variable="page" prefix=", "/>
-          </group>
-        </else-if>
-        <else>
-          <group prefix=". " delimiter=", ">
-            <text macro="publisher"/>
-          </group>
-        </else>
-      </choose>
+
+      <!-- Journal Volume: Pages OR Publisher -->
+      <group delimiter=" ">
+        <text macro="container-title"/>
+        <text macro="volume"/>
+        <text macro="pages"/>
+        <text macro="publisher"/>
+      </group>
     </layout>
   </bibliography>
+
 </style>
